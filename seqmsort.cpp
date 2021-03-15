@@ -1,8 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <stdlib.h>
-#include <cilk/cilk.h>
-#include <cilk/cilk_api.h>
 #include <get_time.h>
 
 #include <cmath>
@@ -42,17 +40,15 @@ void merge(int* arr, int start, int end) {
     return;
 }
 
-void paramsort(int* arr, int start, int end) {
+void seqmsort(int* arr, int start, int end) {
     if (start == end)
 	return;
     int mid = (start + end) / 2;
-    cilk_spawn paramsort(arr, start, mid);
-    paramsort(arr, mid + 1, end);
-    cilk_sync;
+    seqmsort(arr, start, mid);
+    seqmsort(arr, mid + 1, end);
     merge(arr, start, end);
     return;
 }
-
 
 int main(int argc, char** argv) {
     if (argc != 2)
@@ -67,7 +63,7 @@ int main(int argc, char** argv) {
     }
 
     time t; t.start();
-    paramsort(arr, 0, n-1);
+    seqmsort(arr, 0, n-1);
     t.stop(); cout << "time: " << t.get_total() << endl;
 
     // for (int i = 0; i < n; ++i) {
