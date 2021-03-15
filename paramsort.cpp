@@ -3,12 +3,14 @@
 #include <stdlib.h>
 #include <cilk/cilk.h>
 #include <cilk/cilk_api.h>
-#include <get_time.h>
+#include "get_time.h"
 
 #include <cmath>
 #include <ctime>
 
 using namespace std;
+
+int th = 128;
 
 void merge(int* arr, int start, int end) {
     int mid = (start + end) / 2;
@@ -46,9 +48,15 @@ void paramsort(int* arr, int start, int end) {
     if (start == end)
 	return;
     int mid = (start + end) / 2;
-    cilk_spawn paramsort(arr, start, mid);
-    paramsort(arr, mid + 1, end);
-    cilk_sync;
+    if (end - start < th) {
+	paramsort(arr, start, mid);
+	paramsort(arr, mid + 1, end);
+    }
+    else {
+        cilk_spawn paramsort(arr, start, mid);
+        paramsort(arr, mid + 1, end);
+        cilk_sync;
+    }
     merge(arr, start, end);
     return;
 }
@@ -66,7 +74,7 @@ int main(int argc, char** argv) {
 	arr[i] = 1 + (rand() % (n * 2));
     }
 
-    time t; t.start();
+    timer t; t.start();
     paramsort(arr, 0, n-1);
     t.stop(); cout << "time: " << t.get_total() << endl;
 

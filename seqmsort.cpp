@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <stdlib.h>
-#include <get_time.h>
+#include "get_time.h"
 
 #include <cmath>
 #include <ctime>
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 	arr[i] = 1 + (rand() % (n * 2));
     }
 
-    time t; t.start();
+    timer t; t.start();
     seqmsort(arr, 0, n-1);
     t.stop(); cout << "time: " << t.get_total() << endl;
 

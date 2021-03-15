@@ -11,5 +11,7 @@ seqmsort: seqmsort.cpp
 
 clean:
 	rm paramsort
+	rm seqmsort
+
 
 .PHONY: clean
